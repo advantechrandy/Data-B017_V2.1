@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>底盤氣流擴散器技術分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-image: 
+                linear-gradient(rgba(234, 179, 8, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(234, 179, 8, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .carbon-panel {
+            border: 1px solid #262626;
+            background: linear-gradient(145deg, #171717, #0a0a0a);
+            position: relative;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8);
+            border-top: 4px solid #eab308;
+        }
+
+        .header-font {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            color: #eab308;
+        }
+
+        h2 {
+            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: "DRS";
+            font-size: 0.6rem;
+            background: #eab308;
+            color: #000;
+            padding: 2px 6px;
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        .data-card {
+            background: rgba(38, 38, 38, 0.5);
+            border-left: 4px solid #eab308;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .highlight {
+            color: #eab308;
+            font-weight: bold;
+        }
+
+        .physics-formula {
+            background: #000;
+            padding: 1.5rem;
+            border: 1px dashed #444;
+            text-align: center;
+            font-family: 'Orbitron', serif;
+            margin: 1.5rem 0;
+            color: #eab308;
+        }
+
+        .image-container {
+            border: 1px solid #333;
+            background: #111;
+            margin: 2rem 0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .image-caption {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: grayscale(20%) contrast(110%);
+            transition: filter 0.3s ease;
+        }
+
+        img:hover {
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #eab308;
+            font-size: 0.7rem;
+            top: 6px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #eab308;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-16">
+
+    <div class="max-w-5xl mx-auto carbon-panel overflow-hidden">
+        <div class="p-8 md:p-16">
+            <header class="mb-12">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs tracking-widest text-yellow-500 font-bold">AERODYNAMICS LAB</span>
+                    <span class="text-xs text-gray-600">SPEC: GROUND-EFFECT-V3</span>
+                </div>
+                <h1 class="header-font text-4xl md:text-5xl font-bold">REAR DIFFUSER V2.1</h1>
+                <p class="text-gray-500 mt-2">賽車底盤擴散器：文丘里效應與下壓力優化分析</p>
+            </header>
+
+            <section>
+                <p class="text-lg leading-relaxed mb-8 text-gray-400">
+                    在賽車設計中，<span class="highlight">氣流擴散器 (Diffuser)</span> 是位於車底後部的一個向上傾斜的部件。它的核心任務不是提供升力，而是透過加速車底氣流來創造「負壓」，將賽車牢牢地吸在地面上。
+                </p>
+
+                <!-- 實體照片加入 -->
+                <div class="image-container">
+                    <img src="https://p2.itc.cn/images01/20210705/52f98859c67f4578a697640e5ae8a78f.png" alt="[賽車擴散器實體照片]">
+                    <p class="image-caption">FIG 01. 賽車尾部擴散器實體結構展示 (Carbon Fiber Construction)</p>
+                </div>
+
+                <h2>01. 核心物理：文丘里效應</h2>
+                <div class="data-card">
+                    <p class="mb-4">根據白努利原理，流體的速度與壓力成反比：</p>
+                    <div class="physics-formula">
+                        P + ½ · ρ · v² = constant
+                    </div>
+
+                    <!-- 原理說明圖片加入 -->
+                    <div class="image-container bg-white/5">
+                        <img src="https://p3.itc.cn/images01/20210705/d2bc93aa18694d8aa11c17065f9ae936.jpeg" alt="[擴散器氣流原理說明圖]">
+                        <p class="image-caption">FIG 02. 底盤氣流壓差變化示意 (Aerodynamic Pressure Differential Diagram)</p>
+                    </div>
+
+                    <ul>
+                        <li><span class="highlight">加速區：</span> 平坦的車底與地面形成狹窄空間，氣流被迫加速，壓力隨之下降。</li>
+                        <li><span class="highlight">擴散區：</span> 當氣流到達車尾擴散器時，空間逐漸變大，氣流減速並恢復至大氣壓力。</li>
+                    </ul>
+                </div>
+
+                <h2>02. 擴散器的三大功能</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-6 border border-neutral-800">
+                        <h3 class="text-yellow-500 font-bold mb-3 underline">創造壓差</h3>
+                        <p class="text-sm text-gray-500">透過擴散器的形狀，讓車底與車頂產生極大的壓力差，進而產生巨大的下壓力（Downforce）。</p>
+                    </div>
+                    <div class="p-6 border border-neutral-800">
+                        <h3 class="text-yellow-500 font-bold mb-3 underline">填補真空</h3>
+                        <p class="text-sm text-gray-500">平滑地引導車底氣流與車尾外部氣流匯合，減少車後的真空區與亂流阻力。</p>
+                    </div>
+                    <div class="p-6 border border-neutral-800">
+                        <h3 class="text-yellow-500 font-bold mb-3 underline">氣流抽吸</h3>
+                        <p class="text-sm text-gray-500">擴散器的低壓區會產生「抽吸效應」，進一步加快整片底盤下方的空氣流速。</p>
+                    </div>
+                </div>
+
+                <!-- 效果說明更新 -->
+                <div class="p-6 bg-yellow-900/10 border border-yellow-600/30 my-8">
+                    <p class="text-sm leading-relaxed text-yellow-500/80">
+                        <span class="font-bold text-yellow-500">技術觀察：</span> 一般來說，由於擴散器產生下壓力的效率非常高，所以現代 F1 賽車擴散器負責產生總下壓力的 40% 左右，使得 F1 賽車研發部門都會將提高擴散器效能視為重點工作。
+                    </p>
+                </div>
+
+                <h2>03. 關鍵設計參數</h2>
+                <div class="data-card">
+                    <ul>
+                        <li><span class="highlight">膨脹角 (Expansion Angle)：</span> 擴散器向上傾斜的角度。角度過大會導致氣流分離（失速），角度過小則效能不足。</li>
+                        <li><span class="highlight">導流片 (Vertical Fins)：</span> 防止側向干擾氣流進入擴散器內部，維持氣流的縱向穩定性。</li>
+                        <li><span class="highlight">密封效應 (Sealing)：</span> F1 常用側裙或氣流簾來「密封」車底兩側，防止高壓空氣滲入低壓的底盤。</li>
+                    </ul>
+                </div>
+
+                <h2>04. 擴散器失速 (Diffuser Stall)</h2>
+                <div class="p-6 bg-red-950/20 border border-red-900/50">
+                    <p class="text-red-400 leading-relaxed">
+                        與飛機機翼相似，若擴散器的設計過於激進，或車輛行駛高度（Ride Height）劇烈變化，氣流將無法緊貼擴散器表面，引發<span class="font-bold text-red-500">底盤失速</span>。這會導致下壓力瞬間消失，造成賽車在高速彎道中失控。
+                    </p>
+                </div>
+            </section>
+
+            <footer class="mt-20 pt-8 border-t border-neutral-800 flex flex-col md:flex-row justify-between items-center text-xs text-neutral-600 tracking-widest">
+                <div>CREATED BY RANDY CHEN @2026</div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // 禁用右鍵功能
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        }, false);
+
+        // 禁用開發者工具快捷鍵
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // Ctrl+Shift+I
+            if (e.ctrlKey && e.keyCode == 85) return false; // Ctrl+U
+            if (e.ctrlKey && e.keyCode == 83) return false; // Ctrl+S
+        };
+    </script>
+</body>
+</html>
